@@ -26,24 +26,41 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="6dp"
             android:background="@android:color/darker_gray" />
-        <Button
-            android:id="@+id/JoinButton"
-            android:layout_width="wrap_content"
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/remote_video_view_container"
             android:layout_alignStart="@id/remote_video_view_container"
-            android:layout_marginTop="40dp"
-            android:onClick="joinChannel"
-            android:text="Join" />
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/JoinButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="joinChannel"
+                android:text="Join" />
+            <Button
+                android:id="@+id/effectButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:onClick="updateEffect"
+                android:text="Effect" />
 
-        <Button
-            android:id="@+id/LeaveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/remote_video_view_container"
-            android:layout_alignEnd="@id/remote_video_view_container"
-            android:layout_marginTop="40dp"
-            android:onClick="leaveChannel"
-            android:text="Leave" />
+            <Button
+                android:id="@+id/LeaveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:onClick="leaveChannel"
+                android:text="Leave" />
+        </LinearLayout>
+
+
+
     </RelativeLayout>
 </ScrollView>

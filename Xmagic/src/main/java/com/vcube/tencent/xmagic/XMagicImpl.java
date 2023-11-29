@@ -23,13 +23,10 @@ public class XMagicImpl implements SensorEventListener {
         TELicenseCheck.getInstance().setTELicense(context, mXMagicLicenceUrl, mXMagicKey, new TELicenseCheck.TELicenseCheckListener() {
             @Override
             public void onLicenseCheckFinish(int errorCode, String msg) {
-                //注意：このコールバックは呼び出しスレッド内にあるとは限りません
                 if (errorCode == TELicenseCheck.ERROR_OK) {
-                    //認証に成功しました
                     authCheck = true;
                 }else{
                     //認証に失敗しました
-                    authCheck = false;
                 }
             }
         });
@@ -41,15 +38,6 @@ public class XMagicImpl implements SensorEventListener {
         mXmagicApi = new XmagicApi(context, XmagicResParser.getResPath(), new XmagicApi.OnXmagicPropertyErrorListener() {
             @Override
             public void onXmagicPropertyError(String errorMsg, int code) {
-//                if (context instanceof Activity) {
-//                    ((Activity) context).runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            mXmagicPanelViewController.tvErrorMsg.setVisibility(View.VISIBLE);
-//                            mXmagicPanelViewController.tvErrorMsg.setText(code + ":" + errorMsg);
-//                        }
-//                    });
-//                }
             }
         });
     }
@@ -79,9 +67,6 @@ public class XMagicImpl implements SensorEventListener {
         if (mXmagicApi != null)
             mXmagicApi.onPause();
     }
-
-
-
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
