@@ -1,0 +1,167 @@
+[
+    {
+        "id":1,
+        "label":"热门功能",
+        "labelEn":"Hot",
+        "type":1,
+        "icon":""
+    },
+    {
+        "id":2,
+        "label":"高级美型",
+        "labelEn":"Advanced beautification",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/advanced_beauty.png"
+    },
+    {
+        "id":3,
+        "label":"虚拟形象",
+        "labelEn":"Virtual avatar",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/avatar.png"
+    },
+    {
+        "id":4,
+        "label":"虚拟背景",
+        "labelEn":"Virtual background",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/virtual_background.png"
+    },
+    {
+        "id":5,
+        "label":"特效",
+        "labelEn":"Effects",
+        "type":1,
+        "icon":""
+    },
+    {
+        "id":6,
+        "label":"基础美型",
+        "labelEn":"Basic beautification",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/basic_beauty.png"
+    },
+    {
+        "id":7,
+        "label":"通用美型",
+        "labelEn":"General beautification",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/universal_beauty.png"
+    },
+    {
+        "id":2,
+        "label":"高级美型",
+        "labelEn":"Advanced beautification",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/advanced_beauty.png"
+    },
+    {
+        "id":25,
+        "label":"一键美颜",
+        "labelEn":"One-click beauty",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/beauty_group.png"
+    },
+    {
+        "id":9,
+        "label":"美妆",
+        "labelEn":"Makeup",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/makeup.png"
+    },
+    {
+        "id":10,
+        "label":"美体",
+        "labelEn":"Body",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/body_beauty.png"
+    },
+    {
+        "id":11,
+        "label":"贴纸",
+        "labelEn":"Stickers",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/sticker.png"
+    },
+    {
+        "id":12,
+        "label":"滤镜",
+        "labelEn":"Filters",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/lut.png"
+    },
+    {
+        "id":13,
+        "label":"手势贴纸",
+        "labelEn":"Gesture stickers",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/gesture_sticker.png"
+    },
+    {
+        "id":3,
+        "label":"虚拟形象",
+        "labelEn":"Virtual avatar",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/avatar.png"
+    },
+    {
+        "id":4,
+        "label":"虚拟背景",
+        "labelEn":"Virtual background",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/virtual_background.png"
+    },
+    {
+        "id":16,
+        "label":"原子能力",
+        "labelEn":"Capabilities",
+        "type":1,
+        "icon":""
+    },
+    {
+        "id":17,
+        "label":"天空分割",
+        "labelEn":"Sky segmentation",
+        "isShow":false,
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/sky_seg.png"
+    },
+    {
+        "id":18,
+        "label":"手势识别",
+        "labelEn":"Gesture recognition",
+        "isShow":true,
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/gesture_Recognition.png"
+    },
+    {
+        "id":19,
+        "label":"头发分割",
+        "labelEn":"Hair segmentation",
+        "isShow":false,
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/hair_seg.png"
+    },
+    {
+        "id":20,
+        "label":"人像分割",
+        "labelEn":"Person segmentation",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/portrait_seg.png"
+    },
+    {
+        "id":21,
+        "label":"人体检测",
+        "labelEn":"Human body detection",
+        "type":2,
+        "isShow":false,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/body_detection.png"
+    },
+    {
+        "id":22,
+        "label":"人脸检测",
+        "labelEn":"Face detection",
+        "type":2,
+        "icon":"https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/demoMotion/image/xmagic_demo_menu/face_detection.png"
+    }
+]

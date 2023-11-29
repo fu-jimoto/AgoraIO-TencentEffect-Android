@@ -1,0 +1,25 @@
+material {
+    name : studio_transparent_shadow,
+    requires : [ uv0, uv1, color ],
+    shadingModel : unlit,
+    blending : transparent,
+    shadowMultiplier : true,
+    depthWrite : true,
+    doubleSided : false,
+    culling: back,
+    depthCulling : true,
+    flipUV : false,
+    specularAmbientOcclusion: simple,
+    parameters : [
+        { type : float4, 
+          name : baseColorFactor 
+        }
+    ],
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor = materialParams.baseColorFactor;
+    }
+}

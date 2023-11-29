@@ -1,0 +1,14 @@
+[
+    {
+        "id":22,
+        "label":"人脸检测",
+        "labelEn":"Face detection",
+        "isSelected":true
+    },
+    {
+        "id":18,
+        "label":"手势检测",
+        "labelEn":"Hand detection",
+        "isSelected":true
+    }
+]

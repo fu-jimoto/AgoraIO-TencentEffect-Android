@@ -12,7 +12,9 @@ import android.view.SurfaceView;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.tencent.xmagic.XmagicApi;
 import com.tencent.xmagic.telicense.TELicenseCheck;
+import com.vcube.tencent.xmagic.XMagicImpl;
 
 
 import io.agora.rtc2.Constants;
@@ -26,26 +28,20 @@ import io.agora.rtc2.ChannelMediaOptions;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Fill the App ID of your project generated on Agora Console.
-    private final String appId = "";
-    // Fill the channel name.
-    private String channelName = "sample";
-    // Fill the temp token generated on Agora Console.
-    private String token = "";
-    // An integer that identifies the local user.
-    private int uid = 0;
-
     private String effectLicenceUrl = "";
     private String effectKey = "";
-    private PreprocessorTencentEffect preProcessor;
+    private final String appId = "";
+
+    private String channelName = "sample";
+    private String token = "";
+    private int uid = 0;
 
     private boolean isJoined = false;
-
     private RtcEngine agoraEngine;
-    //SurfaceView to render local video in a Container.
     private SurfaceView localSurfaceView;
-    //SurfaceView to render Remote video in a Container.
     private SurfaceView remoteSurfaceView;
+
+    private PreprocessorTencentEffect preProcessor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +51,15 @@ public class MainActivity extends AppCompatActivity {
         if (!checkSelfPermission()) {
             ActivityCompat.requestPermissions(this, REQUESTED_PERMISSIONS, PERMISSION_REQ_ID);
         }
+
+        boolean effectAuth = XMagicImpl.initAuth(this,effectLicenceUrl, effectKey);
+        if (effectAuth == false) {
+            showMessage("Effect Auth Success");
+        }else{
+            showMessage("Effect Auth Error");
+        }
         setupVideoSDKEngine();
-        setupEffectSDKEngine();
+        //setupEffectSDKEngine();
     }
 
     protected void onDestroy() {
@@ -72,21 +75,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setupEffectSDKEngine() {
-
-        TELicenseCheck.getInstance().setTELicense(getBaseContext(), effectLicenceUrl, effectKey, new TELicenseCheck.TELicenseCheckListener() {
-            @Override
-            public void onLicenseCheckFinish(int errorCode, String msg) {
-                //注意：このコールバックは呼び出しスレッド内にあるとは限りません
-                if (errorCode == TELicenseCheck.ERROR_OK) {
-                    showMessage("Effect Auth Success");
-                }else{
-                    showMessage("Effect Auth Error");
-                }
-            }
-        });
-
-    }
+//    private void setupEffectSDKEngine() {
+//
+//        TELicenseCheck.getInstance().setTELicense(getBaseContext(), effectLicenceUrl, effectKey, new TELicenseCheck.TELicenseCheckListener() {
+//            @Override
+//            public void onLicenseCheckFinish(int errorCode, String msg) {
+//                //注意：このコールバックは呼び出しスレッド内にあるとは限りません
+//                if (errorCode == TELicenseCheck.ERROR_OK) {
+//                    showMessage("Effect Auth Success");
+//                }else{
+//                    showMessage("Effect Auth Error");
+//                }
+//            }
+//        });
+//    }
 
     private void setupVideoSDKEngine() {
         try {
