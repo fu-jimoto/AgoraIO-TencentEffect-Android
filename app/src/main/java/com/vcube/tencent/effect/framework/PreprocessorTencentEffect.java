@@ -1,73 +1,107 @@
 package com.vcube.tencent.effect.framework;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.tencent.xmagic.GlUtil;
 import com.vcube.tencent.xmagic.XMagicImpl;
-import static com.tencent.xmagic.GlUtil.createTexture;
-import java.util.concurrent.Callable;
 
+import java.nio.ByteBuffer;
+
+import io.agora.base.TextureBuffer;
 import io.agora.base.TextureBufferHelper;
 import io.agora.base.VideoFrame;
+import io.agora.base.internal.video.YuvHelper;
+import io.agora.rtc2.gl.EglBaseProvider;
 import io.agora.rtc2.video.IVideoFrameObserver;
 
 public class PreprocessorTencentEffect implements IVideoFrameObserver {
     private final static String TAG = PreprocessorTencentEffect.class.getSimpleName();
-    private Context mContext;
-    private TextureBufferHelper textureBufferHelper;
-    private  XMagicImpl mXMagic;
-    private int rgbaID = -1;
-    private int outputID = -1;
-    private final float[] mOesMatrix = new float[16];
-    private OESRenderer mYUV2RGBAConverter;
-    private RotateRenderer mRotateRender;
-    private SurfaceTexture mSurfaceTexture;
+    private XMagicImpl mXMagic;
 
-    public PreprocessorTencentEffect(Context context) {
-        mContext = context;
+    private boolean renderSwitch = true;
+    private TextureBufferHelper mTextureBufferHelper;
+
+
+    private android.graphics.Matrix transformMatrix;
+
+    private TextureConverter mTextureConverter = null;
+    private TextureConverter mRevertConverter = null;
+
+
+    public PreprocessorTencentEffect(XMagicImpl xMagic) {
+        this.mXMagic = xMagic;
     }
 
     @Override
     public boolean onCaptureVideoFrame(int sourceType, VideoFrame videoFrame) {
-        VideoFrame.Buffer buffer = videoFrame.getBuffer();
-        if(!(buffer instanceof VideoFrame.TextureBuffer)){
-            return false;
+        if (!renderSwitch) {
+            return true;
         }
-        VideoFrame.TextureBuffer textureBuffer = (VideoFrame.TextureBuffer) buffer;
+        int outputID = -1;
+        Log.e(TAG, "" + sourceType + videoFrame.getBuffer().getClass().getName());
+        if (mTextureBufferHelper == null) {
+            mTextureBufferHelper = TextureBufferHelper.create("STRender", EglBaseProvider.instance().getRootEglBase().getEglBaseContext());
+            if (mTextureBufferHelper != null) {
+                mTextureBufferHelper.invoke(() -> {
+                    if (mSurfaceViewListener != null) {
+                        mSurfaceViewListener.onSurfaceCreated();
+                    }
+                    return null;
+                });
+            }
+        }
 
-        int srcID = textureBuffer.getTextureId();
+        VideoFrame.Buffer buffer = videoFrame.getBuffer();
         int width = buffer.getWidth();
         int height = buffer.getHeight();
-        if (mYUV2RGBAConverter == null) {
-            mYUV2RGBAConverter = new OESRenderer();
-            mYUV2RGBAConverter.init();
-            mYUV2RGBAConverter.setRotateAndFlip(180,0,1);
-            mSurfaceTexture = new SurfaceTexture(srcID);
-            rgbaID = createTexture(height,width, GLES20.GL_RGBA);
+        int rotation = videoFrame.getRotation();
+
+        if (mTextureBufferHelper != null) {
+            if (videoFrame.getBuffer() instanceof VideoFrame.TextureBuffer) {
+                TextureBuffer textureBuffer = (TextureBuffer) videoFrame.getBuffer();
+                outputID = mTextureBufferHelper.invoke(() -> {
+                            int rgbaId = mTextureBufferHelper.convertToRGBA(textureBuffer, 0);
+                            return processVideo(rgbaId, width, height, true);
+                        }
+                );
+                transformMatrix = textureBuffer.getTransformMatrix();
+            }
         }
 
-        if (mRotateRender == null) {
-            mRotateRender = new RotateRenderer();
-            mRotateRender.init();
-            outputID = createTexture(width,height, GLES20.GL_RGBA);
+
+        if (outputID <= 0) {
+            return false;
         }
 
-        mSurfaceTexture.updateTexImage();
-        mSurfaceTexture.getTransformMatrix(mOesMatrix);
-        mYUV2RGBAConverter.doRender(srcID, rgbaID, height, width, mOesMatrix, null, null);
-
-        Integer texId = textureBufferHelper.invoke((Callable<Integer>) () -> mXMagic.process(rgbaID, height,width));
-        mRotateRender.doRender(texId,outputID,width,height,null,null,null);
-
-        VideoFrame.TextureBuffer retBuffer = textureBufferHelper.wrapTextureBuffer(textureBuffer.getWidth(), textureBuffer.getHeight(), VideoFrame.TextureBuffer.Type.RGB,
-                texId, new Matrix());
-        videoFrame.replaceBuffer(retBuffer, videoFrame.getRotation(), videoFrame.getTimestampNs());
-
+        if (mTextureBufferHelper != null) {
+            VideoFrame.TextureBuffer textureBuffer = mTextureBufferHelper.wrapTextureBuffer(
+                    width, height, VideoFrame.TextureBuffer.Type.RGB, outputID, transformMatrix);
+            videoFrame.replaceBuffer(textureBuffer, rotation, videoFrame.getTimestampNs());
+        }
         return true;
     }
+
+
+    private int processVideo(int rgbaId, int width, int height, boolean isFontCamera) {
+        if (mTextureConverter == null) {
+            mTextureConverter = new TextureConverter();
+            mRevertConverter = new TextureConverter();
+        }
+        if (mXMagic != null) {
+            int rotateId = mTextureConverter.convert(rgbaId, width, height, isFontCamera ? 270 : 90, false, false);
+            int processId = mXMagic.process(rotateId, height, width);
+            int resultId = mRevertConverter.convert(processId, height, width, isFontCamera ? 90 : 270, isFontCamera, false);
+            GLES20.glFinish();
+            return resultId;
+        }
+        return rgbaId;
+    }
+
 
     @Override
     public boolean onPreEncodeVideoFrame(int sourceType, VideoFrame videoFrame) {
@@ -86,12 +120,12 @@ public class PreprocessorTencentEffect implements IVideoFrameObserver {
 
     @Override
     public int getVideoFrameProcessMode() {
-        return 1;
+        return PROCESS_MODE_READ_WRITE;
     }
 
     @Override
     public int getVideoFormatPreference() {
-        return 1;
+        return VIDEO_PIXEL_DEFAULT;
     }
 
     @Override
@@ -101,11 +135,38 @@ public class PreprocessorTencentEffect implements IVideoFrameObserver {
 
     @Override
     public boolean getMirrorApplied() {
-        return false;
+        return true;
     }
 
     @Override
     public int getObservedFramePosition() {
-        return 0;
+        return POSITION_POST_CAPTURER;
+    }
+
+
+    private SurfaceViewListener mSurfaceViewListener;
+
+    public interface SurfaceViewListener {
+        void onSurfaceCreated();
+
+        void onSurfaceDestroyed();
+    }
+
+    public void setSurfaceListener(SurfaceViewListener surfaceViewListener) {
+        this.mSurfaceViewListener = surfaceViewListener;
+    }
+
+    public void releaseRender() {
+        renderSwitch = false;
+        if (mTextureBufferHelper != null) {
+            mTextureBufferHelper.invoke(() -> {
+                if (mSurfaceViewListener != null) {
+                    mSurfaceViewListener.onSurfaceDestroyed();
+                }
+                return null;
+            });
+            mTextureBufferHelper.dispose();
+            mTextureBufferHelper = null;
+        }
     }
 }

@@ -16,7 +16,14 @@ import com.vcube.tencent.xmagic.module.XmagicResParser;
 public class XMagicImpl implements SensorEventListener {
 
     XmagicApi mXmagicApi;
-    public static boolean authCheck = false;
+    public static void initAuth(Context context, String mXMagicLicenceUrl, String mXMagicKey, TELicenseCheck.TELicenseCheckListener licenseCheckListener) {
+
+        TELicenseCheck.getInstance().setTELicense(context, mXMagicLicenceUrl, mXMagicKey,licenseCheckListener);
+
+    }
+
+    /*public static boolean authCheck = false;
+
     public static boolean initAuth(Context context, String mXMagicLicenceUrl, String mXMagicKey) {
         Auth.AuthResult result = null;
 
@@ -31,7 +38,7 @@ public class XMagicImpl implements SensorEventListener {
             }
         });
         return authCheck;
-    }
+    }*/
 
 
     public XMagicImpl(Context context) {

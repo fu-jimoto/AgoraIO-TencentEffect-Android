@@ -39,29 +39,205 @@ import javax.microedition.khronos.opengles.GL10;
 
 class BaseRenderer {
 
+    protected static final String VERT_SHADER_ROTATE_0 =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(position.x, position.y, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+    protected static final String VERT_SHADER_ROTATE_0_H =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(-position.x, position.y, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+    protected static final String VERT_SHADER_ROTATE_0_V =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(position.x, -position.y, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+
+
+    protected static final String VERT_SHADER_ROTATE_90 =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(-position.y,  position.x, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+    protected static final String VERT_SHADER_ROTATE_90_H =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(position.y,  position.x, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+    protected static final String VERT_SHADER_ROTATE_90_V =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(-position.y,  -position.x, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+
+
+    protected static final String VERT_SHADER_ROTATE_180 =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(-position.x, -position.y, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+    protected static final String VERT_SHADER_ROTATE_180_H =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(-position.x, position.y, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+    protected static final String VERT_SHADER_ROTATE_180_V =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(position.x, -position.y, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+
+    protected static final String VERT_SHADER_ROTATE_270 =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(position.y, -position.x, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+
+    protected static final String VERT_SHADER_ROTATE_270_H =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(-position.y, -position.x, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+    protected static final String VERT_SHADER_ROTATE_270_V =
+            "attribute vec4 position;\n" +
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(position.y, position.x, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
+
+
     protected static final String DEFAULT_VERT_SHADER =
             "attribute vec4 position;\n" +
-            "vec4 verticalFlipPosition;\n" +
-            "attribute vec4 inputTexCoord;\n" +
-            "uniform mat4 uInputMatrix;\n" +
-            "uniform mat4 uRotateMatrix;\n" +
-            "uniform mat4 uScreenMatrix;\n" +
-            "varying vec2 textureCoordinate;\n" +
-            "void main()\n" +
-            "{\n" +
-            "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
-            "    verticalFlipPosition = vec4(position.y, -position.x, position.z, 1);\n"+// OpenGL 纹理渲染后被垂直翻转是常见现象, 这里翻转y轴坐标规避, 参考 https://blog.csdn.net/narutojzm1/article/details/51940817
-            "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
-            "}";
+                    "vec4 verticalFlipPosition;\n" +
+                    "attribute vec4 inputTexCoord;\n" +
+                    "uniform mat4 uInputMatrix;\n" +
+                    "uniform mat4 uRotateMatrix;\n" +
+                    "uniform mat4 uScreenMatrix;\n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "    textureCoordinate = (uInputMatrix * inputTexCoord).xy;\n" +
+                    "    verticalFlipPosition = vec4(position.x, -position.y, position.z, 1);\n" +
+                    "    gl_Position = verticalFlipPosition * uRotateMatrix * uScreenMatrix;\n" +
+                    "}";
 
     protected static final String DEFAULT_FRAG_SHADER =
             "precision highp float;\n" +
-            "varying vec2 textureCoordinate;\n" +
-            "uniform sampler2D inputImageTexture;\n" +
-            "void main() \n" +
-            "{\n" +
-            "     gl_FragColor = texture2D(inputImageTexture, textureCoordinate);\n" +
-            "}";
+                    "varying vec2 textureCoordinate;\n" +
+                    "uniform sampler2D inputImageTexture;\n" +
+                    "void main() \n" +
+                    "{\n" +
+                    "     gl_FragColor = texture2D(inputImageTexture, textureCoordinate);\n" +
+                    "}";
 
     protected int vertexShader = -1;
     protected int fragmentShader = -1;
@@ -99,11 +275,11 @@ class BaseRenderer {
     private FloatBuffer vertexBuffer;
 
 
-    public void init(){
-        this.init(DEFAULT_VERT_SHADER, DEFAULT_FRAG_SHADER);
+    public void init() {
+        this.init(VERT_SHADER_ROTATE_0, DEFAULT_FRAG_SHADER);
     }
 
-    public void init(String vertexShaderR, String fragmentShaderR){
+    public void init(String vertexShaderR, String fragmentShaderR) {
         vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderR);
         fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderR);
         mShaderProgram = linkProgram(vertexShader, fragmentShader);
@@ -115,7 +291,7 @@ class BaseRenderer {
 
         aPosition = glGetAttribLocation(mShaderProgram, "position");
         aInputTexCoord = glGetAttribLocation(mShaderProgram, "inputTexCoord");
-        uRotateMat = glGetUniformLocation(mShaderProgram,"uRotateMatrix");
+        uRotateMat = glGetUniformLocation(mShaderProgram, "uRotateMatrix");
         uInputMat = glGetUniformLocation(mShaderProgram, "uInputMatrix");
         uScreenMat = glGetUniformLocation(mShaderProgram, "uScreenMatrix");
 
@@ -125,8 +301,7 @@ class BaseRenderer {
     }
 
     // destination: 0 for screen, 1 for RGBATexture
-    public void beforeRender(int desTextureId, int frameWidth, int frameHeight, float[] srcTransformMatrix, float[] destTransformMatrix)
-    {
+    public void beforeRender(int desTextureId, int frameWidth, int frameHeight, float[] srcTransformMatrix, float[] destTransformMatrix) {
         mFrameWidth = frameWidth;
         mFrameHeight = frameHeight;
         mDesTextureId = desTextureId;
@@ -140,7 +315,7 @@ class BaseRenderer {
         GLES20.glViewport(0, 0, mFrameWidth, mFrameHeight);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-        if(mDesTextureId != -1){//如果存在目标纹理, 使之与 FBO 关联
+        if (mDesTextureId != -1) {//如果存在目标纹理, 使之与 FBO 关联
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFBOIdHolder[0]);
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, mDesTextureId, 0);
         }
@@ -151,7 +326,7 @@ class BaseRenderer {
         glUniformMatrix4fv(uRotateMat, 1, false, mRotateMatrix, 0);
     }
 
-    public void setVertex(){
+    public void setVertex() {
         // 顶点
         vertexBuffer.position(0);
         glEnableVertexAttribArray(aPosition);
@@ -163,24 +338,24 @@ class BaseRenderer {
     }
 
     //顺时针
-    public void setRotateAndFlip(int degree, int flipVertical, int flipHorizontal){
+    public void setRotateAndFlip(int degree, int flipVertical, int flipHorizontal) {
         boolean vertArrayUpdated = false;
-        if(rotateDegree != degree) {
+        if (rotateDegree != degree) {
             rotateDegree = degree;
             Matrix.setIdentityM(mRotateMatrix, 0);
             Matrix.rotateM(mRotateMatrix, 0, rotateDegree, 0f, 0f, 1f);
         }
-        if(this.flipVertical != flipVertical){
+        if (this.flipVertical != flipVertical) {
             vertArrayUpdated = true;
             this.flipVertical = flipVertical;
-            if(flipVertical == 1){
+            if (flipVertical == 1) {
                 vertexData[1] = -1f;
                 vertexData[5] = -1f;
                 vertexData[9] = 1f;
                 vertexData[13] = -1f;
                 vertexData[17] = 1f;
                 vertexData[21] = 1f;
-            }else{
+            } else {
                 vertexData[1] = 1f;
                 vertexData[5] = 1f;
                 vertexData[9] = -1f;
@@ -189,17 +364,17 @@ class BaseRenderer {
                 vertexData[21] = -1f;
             }
         }
-        if(this.flipHorizontal != flipHorizontal){
+        if (this.flipHorizontal != flipHorizontal) {
             vertArrayUpdated = true;
             this.flipHorizontal = flipHorizontal;
-            if(flipHorizontal == 1){
+            if (flipHorizontal == 1) {
                 vertexData[0] = -1f;
                 vertexData[4] = 1f;
                 vertexData[8] = 1f;
                 vertexData[12] = -1f;
                 vertexData[16] = 1f;
                 vertexData[20] = -1f;
-            }else{
+            } else {
                 vertexData[0] = 1f;
                 vertexData[4] = -1f;
                 vertexData[8] = -1f;
@@ -208,30 +383,30 @@ class BaseRenderer {
                 vertexData[20] = 1f;
             }
         }
-        vertexBuffer = vertArrayUpdated? createBuffer(vertexData) : vertexBuffer;
+        vertexBuffer = vertArrayUpdated ? createBuffer(vertexData) : vertexBuffer;
     }
 
-    public void setScreenMatrix(float[] screenMatrix){
-        if(screenMatrix != null && screenMatrix.length == mScreenMatrix.length) {
+    public void setScreenMatrix(float[] screenMatrix) {
+        if (screenMatrix != null && screenMatrix.length == mScreenMatrix.length) {
             System.arraycopy(screenMatrix, 0, mScreenMatrix, 0, mScreenMatrix.length);
-        }else{
+        } else {
             Matrix.setIdentityM(mScreenMatrix, 0);
         }
     }
 
-    public void setTextureMatrix(float[] textureMatrix){
-        if(textureMatrix != null && textureMatrix.length == mInputMatrix.length) {
+    public void setTextureMatrix(float[] textureMatrix) {
+        if (textureMatrix != null && textureMatrix.length == mInputMatrix.length) {
             System.arraycopy(textureMatrix, 0, mInputMatrix, 0, mInputMatrix.length);
-        }else{
+        } else {
             Matrix.setIdentityM(mInputMatrix, 0);
         }
     }
 
-    protected void saveToBuffer(ByteBuffer buffer){
-        if(buffer != null){
+    protected void saveToBuffer(ByteBuffer buffer) {
+        if (buffer != null) {
             glFinish();
             buffer.rewind();
-            if(buffer.capacity() != mFrameHeight * mFrameWidth * 4){
+            if (buffer.capacity() != mFrameHeight * mFrameWidth * 4) {
                 buffer = ByteBuffer.allocateDirect(mFrameHeight * mFrameWidth * 4);
             }
             GLES20.glPixelStorei(3333, 1);
@@ -240,7 +415,7 @@ class BaseRenderer {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
     }
 
-    public void release(){
+    public void release() {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
         glDeleteProgram(mShaderProgram);

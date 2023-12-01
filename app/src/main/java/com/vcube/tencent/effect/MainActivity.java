@@ -1,11 +1,17 @@
 package com.vcube.tencent.effect;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.View;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.view.SurfaceView;
@@ -14,9 +20,13 @@ import android.widget.Toast;
 
 import com.tencent.xmagic.XmagicConstant;
 import com.tencent.xmagic.XmagicProperty;
+import com.tencent.xmagic.telicense.TELicenseCheck;
 import com.vcube.tencent.effect.framework.PreprocessorTencentEffect;
 import com.vcube.tencent.xmagic.XMagicImpl;
+import com.vcube.tencent.xmagic.module.XmagicResParser;
 
+
+import java.io.File;
 
 import io.agora.rtc2.Constants;
 import io.agora.rtc2.IRtcEngineEventHandler;
@@ -28,6 +38,7 @@ import io.agora.rtc2.ChannelMediaOptions;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getName();
     private String effectLicenceUrl = "";
     private String effectKey = "";
     private final String appId = "";
@@ -43,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     private PreprocessorTencentEffect preProcessor;
 
-    private XMagicImpl mXMagic;
+    private XMagicImpl xMagic = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,21 +64,52 @@ public class MainActivity extends AppCompatActivity {
         if (!checkSelfPermission()) {
             ActivityCompat.requestPermissions(this, REQUESTED_PERMISSIONS, PERMISSION_REQ_ID);
         }
-
-        boolean effectAuth = XMagicImpl.initAuth(this,effectLicenceUrl, effectKey);
-        if (effectAuth == false) {
-            showMessage("Effect Auth Success");
-        }else{
-            showMessage("Effect Auth Error");
-        }
-        setupVideoSDKEngine();
+        XmagicResParser.setResPath(new File(getFilesDir(), "xmagic").getAbsolutePath());
+        copyXMagicRes();
 
     }
 
-    protected void onDestroy() {
+
+    private void copyXMagicRes() {
+        if (isCopyRes()) {
+            Log.e(TAG, "Has been copied");
+            showMessage("Has been copied");
+            auth();
+        } else {
+            new Thread(() -> {
+                XmagicResParser.copyRes(MainActivity.this);
+                Log.e(TAG, "copy res success");
+                showMessage("copy res success");
+                saveCopyData();
+                auth();
+            }).start();
+        }
+    }
+
+
+    private void auth() {
+        XMagicImpl.initAuth(this, effectLicenceUrl, effectKey, (errorCode, msg) -> {
+            if (errorCode == TELicenseCheck.ERROR_OK) {
+                showMessage("Effect Auth Success");
+                runOnUiThread(() -> setupVideoSDKEngine());
+            } else {
+                //認証に失敗しました
+                showMessage("Effect Auth Error");
+            }
+        });
+    }
+
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
-        agoraEngine.stopPreview();
-        agoraEngine.leaveChannel();
+        if (preProcessor != null) {
+            preProcessor.releaseRender();
+        }
+        if (agoraEngine != null) {
+            agoraEngine.stopPreview();
+            agoraEngine.leaveChannel();
+        }
 
         new Thread(() -> {
             RtcEngine.destroy();
@@ -82,8 +125,25 @@ public class MainActivity extends AppCompatActivity {
             config.mEventHandler = mRtcEventHandler;
             agoraEngine = RtcEngine.create(config);
             agoraEngine.enableVideo();
-            preProcessor = new PreprocessorTencentEffect(this);
+            xMagic = new XMagicImpl(this);
+
+            preProcessor = new PreprocessorTencentEffect(xMagic);
             agoraEngine.registerVideoFrameObserver(preProcessor);
+
+            preProcessor.setSurfaceListener(new PreprocessorTencentEffect.SurfaceViewListener() {
+                @Override
+                public void onSurfaceCreated() {
+
+                }
+
+                @Override
+                public void onSurfaceDestroyed() {
+
+                    if (xMagic != null) {
+                        xMagic.onDestroy();
+                    }
+                }
+            });
 
         } catch (Exception e) {
             showMessage(e.toString());
@@ -153,17 +213,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void updateEffect(View view){
+    public void updateEffect(View view) {
         showMessage("Update Effect");
 
-        /*XmagicProperty xmagicProperty = new XmagicProperty(
+//        XmagicProperty xmagicProperty = new XmagicProperty(
+//                XmagicProperty.Category.BEAUTY,
+//                null,
+//                null,
+//                XmagicConstant.BeautyConstant.BEAUTY_ROSY,   //红润
+//                new XmagicProperty.XmagicPropertyValues(0, 100, 100, 0, 1)
+//        );
+
+        XmagicProperty xmagicProperty = new XmagicProperty(
                 XmagicProperty.Category.BEAUTY,
                 null,
                 null,
-                XmagicConstant.BeautyConstant.BEAUTY_TOOTH_WHITEN,
-                null
+                XmagicConstant.BeautyConstant.BEAUTY_ENLARGE_EYE,
+                new XmagicProperty.XmagicPropertyValues(0, 100, 100, 0, 1)
         );
-        mXMagic.updateProperty(xmagicProperty);*/
+
+        //XmagicProperty xmagicProperty = new XmagicProperty<>(XmagicProperty.Category.MOTION, avatarResName, avatarAssetPath, null, null);
+        //XmagicProperty xmagicProperty = new XmagicProperty<>(XmagicProperty.Category.MOTION, "AvatarTPose", XmagicResParser.getResPath() + "MotionRes/avatarRes/AvatarTPose", null, null);
+
+        //AvatarTPose
+
+
+        xMagic.updateProperty(xmagicProperty);
     }
 
     private static final int PERMISSION_REQ_ID = 22;
@@ -173,11 +248,9 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.CAMERA
             };
 
-    private boolean checkSelfPermission()
-    {
-        if (ContextCompat.checkSelfPermission(this, REQUESTED_PERMISSIONS[0]) !=  PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, REQUESTED_PERMISSIONS[1]) !=  PackageManager.PERMISSION_GRANTED)
-        {
+    private boolean checkSelfPermission() {
+        if (ContextCompat.checkSelfPermission(this, REQUESTED_PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, REQUESTED_PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED) {
             return false;
         }
         return true;
@@ -187,4 +260,19 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(() ->
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
     }
+
+
+    private boolean isCopyRes() {
+        String appVersionName = AppUtils.getAppVersionName(this);
+        SharedPreferences sp = getSharedPreferences("demo_settings", Context.MODE_PRIVATE);
+        String savedVersionName = sp.getString("resource_copied", "");
+        return savedVersionName.equals(appVersionName);
+    }
+
+    private void saveCopyData() {
+        String appVersionName = AppUtils.getAppVersionName(this);
+        getSharedPreferences("demo_settings", Context.MODE_PRIVATE).edit()
+                .putString("resource_copied", appVersionName).commit();
+    }
+
 }
