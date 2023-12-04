@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.view.SurfaceView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ import io.agora.rtc2.ChannelMediaOptions;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
+
     private String effectLicenceUrl = "";
     private String effectKey = "";
     private final String appId = "";
@@ -53,9 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private SurfaceView remoteSurfaceView;
 
     private PreprocessorTencentEffect preProcessor;
-
     private XMagicImpl xMagic = null;
-
+    private boolean isEffect = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void copyXMagicRes() {
         if (isCopyRes()) {
-            Log.e(TAG, "Has been copied");
+            Log.i(TAG, "Has been copied");
             showMessage("Has been copied");
             auth();
         } else {
             new Thread(() -> {
                 XmagicResParser.copyRes(MainActivity.this);
-                Log.e(TAG, "copy res success");
+                Log.i(TAG, "copy res success");
                 showMessage("copy res success");
                 saveCopyData();
                 auth();
@@ -93,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                 showMessage("Effect Auth Success");
                 runOnUiThread(() -> setupVideoSDKEngine());
             } else {
-                //認証に失敗しました
                 showMessage("Effect Auth Error");
             }
         });
@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
             xMagic = new XMagicImpl(this);
 
             preProcessor = new PreprocessorTencentEffect(xMagic);
-            agoraEngine.registerVideoFrameObserver(preProcessor);
 
             preProcessor.setSurfaceListener(new PreprocessorTencentEffect.SurfaceViewListener() {
                 @Override
@@ -209,36 +208,69 @@ public class MainActivity extends AppCompatActivity {
             showMessage("You left the channel");
             if (remoteSurfaceView != null) remoteSurfaceView.setVisibility(View.GONE);
             if (localSurfaceView != null) localSurfaceView.setVisibility(View.GONE);
+            agoraEngine.registerVideoFrameObserver(null);
             isJoined = false;
         }
     }
 
+    //https://www.tencentcloud.com/jp/document/product/1143/52514
+    //category,ID,resPath,effkey,effValue
     public void updateEffect(View view) {
-        showMessage("Update Effect");
 
-//        XmagicProperty xmagicProperty = new XmagicProperty(
-//                XmagicProperty.Category.BEAUTY,
-//                null,
-//                null,
-//                XmagicConstant.BeautyConstant.BEAUTY_ROSY,   //红润
-//                new XmagicProperty.XmagicPropertyValues(0, 100, 100, 0, 1)
-//        );
+        Button btn = (Button) findViewById(R.id.effectButton);
 
-        XmagicProperty xmagicProperty = new XmagicProperty(
-                XmagicProperty.Category.BEAUTY,
-                null,
-                null,
-                XmagicConstant.BeautyConstant.BEAUTY_ENLARGE_EYE,
-                new XmagicProperty.XmagicPropertyValues(0, 100, 100, 0, 1)
-        );
+        if(isEffect == true){
+            btn.setText("EffectON");
+            showMessage("Effect OFF");
+            xMagic.updateProperty(null);
+            agoraEngine.registerVideoFrameObserver(null);
+            isEffect = false;
+        }else{
+            btn.setText("EffectOFF");
+            showMessage("Update Effect");
+            agoraEngine.registerVideoFrameObserver(preProcessor);
 
-        //XmagicProperty xmagicProperty = new XmagicProperty<>(XmagicProperty.Category.MOTION, avatarResName, avatarAssetPath, null, null);
-        //XmagicProperty xmagicProperty = new XmagicProperty<>(XmagicProperty.Category.MOTION, "AvatarTPose", XmagicResParser.getResPath() + "MotionRes/avatarRes/AvatarTPose", null, null);
+            //美肌
+            XmagicProperty xmagicProperty = new XmagicProperty(
+                    XmagicProperty.Category.BEAUTY,
+                    null,
+                    null,
+                    XmagicConstant.BeautyConstant.BEAUTY_SMOOTH,
+                    new XmagicProperty.XmagicPropertyValues(0, 100, 50, 0, 1));
 
-        //AvatarTPose
+            //目の大きさ
+//            XmagicProperty xmagicProperty = new XmagicProperty(
+//                    XmagicProperty.Category.BEAUTY,
+//                    null,
+//                    null,
+//                    XmagicConstant.BeautyConstant.BEAUTY_ENLARGE_EYE,
+//                    new XmagicProperty.XmagicPropertyValues(0, 100, 100, 0, 1));
 
+            //口紅
+//            XmagicProperty xmagicProperty = new XmagicProperty(
+//                    XmagicProperty.Category.BEAUTY,
+//                    XmagicConstant.BeautyConstant.BEAUTY_LIPS_LIPS_MASK,
+//                    "/images/beauty/lips_fuguhong.png",
+//                    XmagicConstant.BeautyConstant.BEAUTY_MOUTH_LIPSTICK,
+//                    new XmagicProperty.XmagicPropertyValues(0, 100, 100, 0, 1));
+            //Filter
+//            XmagicProperty xmagicProperty = new XmagicProperty(
+//                    XmagicProperty.Category.LUT,
+//                    "baixi_lf.png",
+//                    XmagicResParser.getResPath()+"light_material/lut/baixi_lf.png",
+//                    null,
+//                    new XmagicProperty.XmagicPropertyValues(0, 100, 60, 0, 1));
+            //Animation
+//            XmagicProperty xmagicProperty = new XmagicProperty(
+//                    XmagicProperty.Category.MOTION,
+//                    "video_keaituya",
+//                    XmagicResParser.getResPath()+"MotionRes/2dMotionRes/video_keaituya",
+//                    null,
+//                    null);
 
-        xMagic.updateProperty(xmagicProperty);
+            xMagic.updateProperty(xmagicProperty);
+            isEffect = true;
+        }
     }
 
     private static final int PERMISSION_REQ_ID = 22;

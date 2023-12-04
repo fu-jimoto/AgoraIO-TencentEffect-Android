@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:onClick="updateEffect"
-                android:text="Effect" />
+                android:text="EffectON" />
 
             <Button
                 android:id="@+id/LeaveButton"
